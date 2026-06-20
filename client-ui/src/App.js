@@ -4,7 +4,7 @@ import { io } from 'socket.io-client';
 import { Activity, AlertTriangle, Terminal } from 'lucide-react';
 import './App.css';
 
-const SOCKET_URL = 'https://improved-space-sniffle-jr5g7g4j5gj4f55jp-8080.app.github.dev/';
+const SOCKET_URL = 'https://sunbalazizlcwu-omni-node-broker.hf.space';
 
 export default function App() {
     const [telemetry, setTelemetry] = useState([]);
