@@ -1,23 +1,41 @@
-// mesh-broker/server.js
 require('dotenv').config();
 const express = require('express');
 const http = require('http');
 const { Server } = require('socket.io');
 const cors = require('cors');
 const axios = require('axios');
+const { GoogleGenAI } = require('@google/genai');
+const mongoose = require('mongoose');
 
 const app = express();
 app.use(cors());
 const server = http.createServer(app);
 const io = new Server(server, { cors: { origin: '*' } });
 
-const PYTHON_URL = process.env.PYTHON_ENGINE_URL;
-const OPENROUTER_KEY = process.env.OPENROUTER_API_KEY;
+// --- 1. MONGODB LEDGER CONNECTION ---
+mongoose.connect(process.env.MONGO_URI)
+    .then(() => console.log('[Database] MongoDB Audit Ledger Connected'))
+    .catch(err => console.error('[Database] Connection Failed. Check your password and IP settings in Atlas:', err.message));
 
-// Simulate incoming enterprise server telemetry
+// --- 2. DEFINE THE DATA SCHEMA ---
+const AuditLogSchema = new mongoose.Schema({
+    component_id: String,
+    cpu_load: Number,
+    memory_usage: Number,
+    api_latency: Number,
+    ml_anomaly_score: Number,
+    ai_diagnosis: String,
+    ai_remediation_command: String,
+    timestamp: { type: Date, default: Date.now }
+});
+const AuditLog = mongoose.model('AuditLog', AuditLogSchema);
+
+// --- 3. PIPELINE SETUP ---
+const PYTHON_URL = process.env.PYTHON_ENGINE_URL;
+const ai = new GoogleGenAI({ apiKey: process.env.GEMINI_API_KEY });
+
 function generateTelemetry() {
-    // 10% chance to simulate a massive server spike
-    const isSpike = Math.random() > 0.90;
+    const isSpike = Math.random() > 0.70; // 30% chance of anomaly
     return {
         component_id: `SRV-${Math.floor(Math.random() * 1000)}`,
         cpu_load: isSpike ? 98.5 : 45 + (Math.random() * 10),
@@ -31,46 +49,73 @@ io.on('connection', (socket) => {
 
     const telemetryInterval = setInterval(async () => {
         const payload = generateTelemetry();
+        console.log(`[Mesh Pulse] Emitting data for ${payload.component_id}`);
         socket.emit('telemetry_update', payload);
 
         try {
-            // 1. Send data to Python ML Engine
             const mlResponse = await axios.post(PYTHON_URL, payload);
             const { is_critical, anomaly_score } = mlResponse.data;
 
-            // 2. If critical, trigger AI Agent for remediation
             if (is_critical) {
-                socket.emit('alert_status', { component: payload.component_id, message: 'Anomaly Detected. Spawning Agent...' });
+                socket.emit('alert_status', { component: payload.component_id, message: 'Anomaly Detected. Spawning Gemini Agent...' });
+                
+                // Trigger AI Engine
                 const remediation = await triggerAutonomousAgent(payload, anomaly_score);
+                
+                // Stream Resolution to Frontend UI
                 socket.emit('remediation_plan', { component: payload.component_id, plan: remediation });
+
+                // --- 4. PERMANENTLY LOG TO MONGODB ---
+                await AuditLog.create({
+                    component_id: payload.component_id,
+                    cpu_load: payload.cpu_load,
+                    memory_usage: payload.memory_usage,
+                    api_latency: payload.api_latency,
+                    ml_anomaly_score: anomaly_score,
+                    ai_diagnosis: remediation.root_cause_diagnosis,
+                    ai_remediation_command: remediation.bash_mitigation_command
+                });
+                console.log(`[Ledger] Wrote AI Audit Log to MongoDB for ${payload.component_id}`);
             }
         } catch (error) {
             console.error('[Pipeline Error]', error.message);
         }
-    }, 3000); // Poll every 3 seconds
+    }, 6000); 
 
     socket.on('disconnect', () => clearInterval(telemetryInterval));
 });
 
 async function triggerAutonomousAgent(telemetry, score) {
-    const prompt = `CRITICAL ALERT on ${telemetry.component_id}. CPU: ${telemetry.cpu_load}%, RAM: ${telemetry.memory_usage}GB, Latency: ${telemetry.api_latency}ms. ML Anomaly Score: ${score}. Provide a concise JSON response with keys: "root_cause_diagnosis" and "bash_mitigation_command".`;
+    const prompt = `CRITICAL ALERT on ${telemetry.component_id}. CPU: ${telemetry.cpu_load.toFixed(1)}%, RAM: ${telemetry.memory_usage.toFixed(1)}GB, Latency: ${telemetry.api_latency.toFixed(0)}ms. ML Anomaly Score: ${score}. Provide a concise JSON response with keys: "root_cause_diagnosis" and "bash_mitigation_command".`;
 
     try {
-        const response = await axios.post('https://openrouter.ai/api/v1/chat/completions', {
-            model: 'meta-llama/llama-3-8b-instruct:free',
-            messages: [
-                { role: 'system', content: 'You are an elite Site Reliability Engineer. Output ONLY valid JSON.' },
-                { role: 'user', content: prompt }
-            ],
-            response_format: { type: 'json_object' }
-        }, {
-            headers: { 'Authorization': `Bearer ${OPENROUTER_KEY}`, 'Content-Type': 'application/json' }
+        const response = await ai.models.generateContent({
+            model: 'gemini-2.5-flash',
+            contents: prompt,
+            config: {
+                systemInstruction: "You are an elite Site Reliability Engineer. Output ONLY valid JSON.",
+                responseMimeType: "application/json",
+            }
         });
 
-        return JSON.parse(response.data.choices[0].message.content);
+        return JSON.parse(response.text);
     } catch (err) {
-        return { root_cause_diagnosis: "Agent timeout", bash_mitigation_command: "sudo systemctl restart networking" };
+        console.error('\n[Gemini API Error Details]:', err.message);
+        return { 
+            root_cause_diagnosis: `Agent Execution Failure: ${err.message}`, 
+            bash_mitigation_command: "sudo systemctl restart networking" 
+        };
     }
 }
+
+// --- 5. AUDIT LOG RETRIEVAL ENDPOINT ---
+app.get('/api/logs', async (req, res) => {
+    try {
+        const logs = await AuditLog.find().sort({ timestamp: -1 }).limit(50);
+        res.json(logs);
+    } catch (err) {
+        res.status(500).json({ error: 'Failed to fetch ledger data' });
+    }
+});
 
 server.listen(process.env.PORT || 8080, () => console.log('[Broker] Orchestrator online on port 8080'));

@@ -4,17 +4,25 @@ import { io } from 'socket.io-client';
 import { Activity, AlertTriangle, Terminal } from 'lucide-react';
 import './App.css';
 
-const SOCKET_URL = 'http://localhost:8080';
+const SOCKET_URL = 'https://improved-space-sniffle-jr5g7g4j5gj4f55jp-8080.app.github.dev/';
 
 export default function App() {
     const [telemetry, setTelemetry] = useState([]);
     const [alerts, setAlerts] = useState([]);
 
     useEffect(() => {
-        const socket = io(SOCKET_URL);
+        // Force the connection to use strictly WebSockets to bypass Codespace polling blocks
+        const socket = io(SOCKET_URL, {
+            transports: ['websocket'],
+            secure: true,
+            rejectUnauthorized: false
+        });
+
+        socket.on('connect', () => console.log('Connected to Omni-Node Mesh!'));
+        socket.on('connect_error', (err) => console.error('Connection Failed:', err.message));
 
         socket.on('telemetry_update', (data) => {
-            setTelemetry(prev => [data, ...prev].slice(0, 8)); // Keep last 8
+            setTelemetry(prev => [data, ...prev].slice(0, 8)); 
         });
 
         socket.on('remediation_plan', (data) => {
