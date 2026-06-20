@@ -118,4 +118,6 @@ app.get('/api/logs', async (req, res) => {
     }
 });
 
-server.listen(process.env.PORT || 8080, () => console.log('[Broker] Orchestrator online on port 8080'));
+
+const PORT = process.env.PORT || 7860;
+server.listen(PORT, () => console.log(`[Broker] Orchestrator online on port ${PORT}`));
