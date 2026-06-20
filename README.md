@@ -1,193 +1,163 @@
-# Omni-Node // Autonomous Operational Mesh & Infrastructure Ledger
+# ⚡ Omni-Node Operations Mesh
 
-<div align="center">
+**Autonomous Infrastructure Telemetry & Self-Healing SRE Pipeline**
 
-![Contributors](https://img.shields.io/github/contributors/username/omni-node?style=for-the-badge&color=00FF66)
-![Stars](https://img.shields.io/github/stars/username/omni-node?style=for-the-badge&color=00FF66)
-![License](https://img.shields.io/github/license/username/omni-node?style=for-the-badge&color=111111)
-![Node Version](https://img.shields.io/badge/Node.js-v20+-green?style=for-the-badge&logo=node.js)
-![Python Version](https://img.shields.io/badge/Python-3.10+-blue?style=for-the-badge&logo=python)
-![Database](https://img.shields.io/badge/MongoDB-Atlas-green?style=for-the-badge&logo=mongodb)
-![AI Engine](https://img.shields.io/badge/Gemini-2.5--Flash-orange?style=for-the-badge&logo=google-gemini)
-
-<p align="center">
-  <strong>A distributed, low-latency infrastructure monitoring and autonomous self-healing operational mesh.</strong>
-  <br />
-  Eliminating human MTTR (Mean Time To Resolution) by combining real-time WebSocket pipelines, unsupervised Machine Learning anomaly detection, and generative AI execution agents.
-</p>
-
-</div>
+*An event-driven microservice architecture that monitors server cluster telemetry in real-time, detects anomalies using unsupervised machine learning, and deploys Gemini-powered autonomous agents to mitigate infrastructure failures instantly.*
 
 ---
 
-## ─── System Architecture Overview ───
+## 📖 Table of Contents
 
-Omni-Node decouples system monitoring from manual human intervention. The architecture operates as a low-latency cyclic control loop distributed across four distinct infrastructure layers:
-
-
-```
-
-┌────────────────────────────────────────────────────────┐
-│                   React Dashboard                      │
-│     (Real-Time WebSockets UI / State Visualization)    │
-└─────────────────────────▲──────────────────────────────┘
-│ (Bidirectional Streams)
-┌─────────────────────────▼──────────────────────────────┐
-│            Node.js Control Plane & Broker               │
-│      (Event Orchestrator / State Machine / Server)     │
-└───────┬──────────────────▲──────────────────────┬──────┘
-│                  │                      │
-│ (POST Payload)   │ (Outlier Flags)      │ (Persist Receipts)
-┌───────▼──────────────────┴─────────────┐  ┌─────▼─────────────────────┐
-│    Python ML Detection Engine          │  │    MongoDB Atlas Cloud     │
-│ (FastAPI / Isolation Forest Model)     │  │   (Immutable Audit Logs)   │
-└────────────────────────────────────────┘  └───────────────────────────┘
-│
-│ (Contextual Prompt Injection)
-┌───────▼────────────────────────────────┐
-│      Google Gemini 2.5 Flash API        │
-│ (Autonomous SRE Reasoning & Scripting) │
-└────────────────────────────────────────┘
-
-```
-
-1. **The Telemetry Pipeline (Node.js & WebSockets):** Ingests and streams cluster-wide health data (CPU, RAM, API Latency) at regular frequencies, routing active telemetry packet payloads dynamically to downstream microservices.
-2. **The Intelligence Layer (Python & Scikit-Learn):** An unsupervised **Isolation Forest** machine learning model evaluates structural multivariate trends. Outliers are instantly mathematical flagged as critical anomalies ($1$) without relying on static hard-coded thresholds.
-3. **The Remediation Layer (Gemini 2.5 Flash SDK):** When a critical alert is triggered, an LLM-driven reasoning agent evaluates the system state vector, diagnoses root causes, and compiles programmatically formatted executable JSON mitigation scripts.
-4. **The Audit Ledger (MongoDB Cloud):** Every automated intervention, diagnostic reasoning chain, and generated system command is safely recorded into a persistent cloud collection for post-mortem analysis.
+* [Overview](https://www.google.com/search?q=%23-overview)
+* [Key Features](https://www.google.com/search?q=%23-key-features)
+* [System Architecture](https://www.google.com/search?q=%23-system-architecture)
+* [Tech Stack](https://www.google.com/search?q=%23-tech-stack)
+* [Local Development Setup](https://www.google.com/search?q=%23-local-development-setup)
+* [Environment Variables](https://www.google.com/search?q=%23-environment-variables)
+* [Deployment Strategy](https://www.google.com/search?q=%23-deployment-strategy)
+* [Roadmap](https://www.google.com/search?q=%23-roadmap)
 
 ---
 
-## ─── Key Engineering Capabilities ───
+## 🔭 Overview
 
-* ⚡ **Sub-Second Automated Remediation:** Replaces manual 15-minute SRE triage cycles with a 2-second automated detect-and-solve background sequence.
-* 🌲 **Unsupervised Outlier Detection:** Utilizes multi-dimensional spatial partitions via Isolation Forests to locate operational abnormalities before cascading system failure occurs.
-* 🤖 **Native Deterministic AI Guardrails:** Forces structured schema compliance on generative AI outputs using native `responseMimeType: "application/json"` formats to ensure safe parsing within infrastructure runtimes.
-* 📜 **Immutable Ledger Auditing:** Fully persistent event tracking using Mongoose object modeling to verify AI behavior for regulatory compliance.
+In large-scale enterprise environments, the greatest vulnerability to uptime is human reaction time. When critical infrastructure spikes in CPU or memory, paging a human Site Reliability Engineer (SRE) often results in 15+ minutes of downtime, SLA breaches, and revenue loss.
 
----
-
-## ─── Core Tech Stack ───
-
-* **Control Plane / Backend:** Node.js, Express, Socket.io, Axios, Mongoose
-* **Machine Learning Engine:** Python 3.10+, FastAPI, Scikit-Learn, NumPy, Uvicorn
-* **Reasoning Foundation:** Google GenAI SDK (`@google/genai`), Gemini 2.5 Flash
-* **Persistence Layer:** MongoDB Atlas Cloud Architecture
+**Omni-Node** completely removes the human operations bottleneck. By establishing a persistent WebSocket mesh, this system streams cluster telemetry to a Python-based machine learning microservice. When Isolation Forest algorithms detect geometric outliers in the data, the system instantly prompts a Google Gemini LLM. The AI acts as an autonomous engineer, diagnosing the root cause and generating exact bash remediation commands in milliseconds, while persisting a permanent audit trail to MongoDB.
 
 ---
 
-## ─── Environment Configuration ───
+## ✨ Key Features
 
-The architecture relies on separate configuration environments across services to maintain separation of concerns.
+* **High-Frequency Telemetry:** Streams real-time simulated server metrics (CPU, RAM, API Ping) across a bidirectional WebSocket mesh.
+* **Unsupervised Anomaly Detection:** Replaces static thresholds with `scikit-learn` Isolation Forests to mathematically flag structural deviations in server behavior.
+* **Autonomous Remediation:** Leverages Google Gemini 2.5 Flash SDK to dynamically generate context-aware JSON payloads containing exact Linux mitigation scripts.
+* **Immutable Audit Ledger:** Enforces a strict MongoDB schema to permanently log every AI decision, ensuring 100% accountability and trace routing for human review.
+* **Distributed Multi-Cloud Architecture:** Decouples the frontend, event broker, and ML engine across highly available, zero-cost edge networks.
 
-### 1. Mesh Broker Environment (`mesh-broker/.env`)
-```env
-PORT=8080
-GEMINI_API_KEY=AIzaSyYourValidatedGeminiKeyHere
-PYTHON_ENGINE_URL=http://localhost:8000/api/v1/analyze
-MONGO_URI=mongodb+srv://admin:<password>@cluster0.mongodb.net/omni-node?retryWrites=true&w=majority
+---
 
-```
+## 🏗 System Architecture
 
-### 2. Anomaly Engine Environment (`anomaly-engine/.env`)
+The pipeline operates on an asynchronous, cyclic control loop distributed across distinct microservices.
 
-```env
-HOST=127.0.0.1
-PORT=8000
+```mermaid
+sequenceDiagram
+    participant React as React Dashboard
+    participant Node as Event Broker (Node.js)
+    participant ML as ML Engine (Python)
+    participant LLM as Gemini API
+    participant DB as MongoDB Atlas
+
+    Node->>React: Emit Live Telemetry (WebSocket)
+    Node->>ML: POST /analyze (CPU, RAM, Ping)
+    
+    alt is_critical == True
+        ML-->>Node: Returns Anomaly Score (-1)
+        Node->>LLM: Prompt Context & Request JSON
+        LLM-->>Node: Returns Root Cause & Bash Command
+        Node->>React: Emit Remediation Alert
+        Node->>DB: Save Immutable Audit Log
+    else Nominal State
+        ML-->>Node: Returns 1 (Healthy)
+    end
 
 ```
 
 ---
 
-## ─── Installation & Local Deployment ───
+## 💻 Tech Stack
 
-To deploy the entire telemetry mesh locally, execute the following commands within isolated terminal windows.
+| Component | Technology | Purpose |
+| --- | --- | --- |
+| **Control Plane** | `Node.js / Socket.io` | Asynchronous event orchestration and data routing. |
+| **Frontend UI** | `React / Tailwind` | Real-time cinematic dark-mode state visualization. |
+| **ML Microservice** | `Python / FastAPI` | High-performance inference endpoint for Isolation Forests. |
+| **AI Reasoning** | `Google GenAI SDK` | Deterministic structured JSON generation for system repairs. |
+| **Persistence** | `MongoDB / Mongoose` | Cloud ledger for AI audit trails and post-mortem analysis. |
+| **Hosting** | `Docker / Vercel / HF` | Containerized runtime and global edge delivery. |
 
-### Phase 1: Spin up the Python ML Microservice
+---
+
+## 🛠 Local Development Setup
+
+To run the Omni-Node mesh locally, you must spin up all three microservices in separate terminal instances:
+
+**1. Clone the repository**
+
+```bash
+git clone https://github.com/yourusername/omni-node-ops.git
+cd omni-node-ops
+
+```
+
+**2. Start the Python ML Engine**
 
 ```bash
 cd anomaly-engine
 python -m venv venv
-source venv/bin/activate  # On Windows use `venv\Scripts\activate`
+source venv/bin/activate  # Windows: venv\Scripts\activate
 pip install -r requirements.txt
-uvicorn main:app --host 127.0.0.1 --port 8000 --reload
+uvicorn main:app --host 0.0.0.0 --port 8000 --reload
 
 ```
 
-### Phase 2: Start the Node.js Event Broker
+**3. Start the Node.js Event Broker**
 
 ```bash
-cd mesh-broker
+cd ../mesh-broker
 npm install
 node server.js
 
 ```
 
-### Phase 3: Launch the Monitoring Frontend Dashboard
+**4. Start the React Command Center**
 
 ```bash
-cd telemetry-ui
+cd ../client-ui
 npm install
-npm run dev
+npm start
 
 ```
 
 ---
 
-## ─── Production Data Schemas ───
+## 🔐 Environment Variables
 
-Data structures enforced across the MongoDB ledger collection to guarantee historical persistence tracking:
+Create a `.env` file in the `mesh-broker` directory. The system requires the following keys to orchestrate the pipeline:
 
-```json
-{
-  "_id": "6674f1e5c3e1b6a4f912cd3a",
-  "component_id": "SRV-894",
-  "cpu_load": 98.5,
-  "memory_usage": 62.0,
-  "api_latency": 1500.0,
-  "ml_anomaly_score": -0.1425,
-  "ai_diagnosis": "Runaway process or thread pool starvation causing core CPU exhaustion.",
-  "ai_remediation_command": "sudo kill -15 $(ps aux --sort=-%cpu | awk 'NR==2 {print $2}')",
-  "timestamp": "2026-06-20T16:40:05.123Z"
-}
+| Variable | Description | Where to get it |
+| --- | --- | --- |
+| `GEMINI_API_KEY` | Authenticates reasoning requests to the GenAI engine. | [Google AI Studio](https://aistudio.google.com/) |
+| `MONGO_URI` | Connection string for the immutable audit ledger. | [MongoDB Atlas](https://www.google.com/search?q=https://www.mongodb.com/cloud/atlas) |
+| `PYTHON_ENGINE_URL` | Route to the ML microservice (e.g., `http://localhost:8000/api/v1/analyze`). | Local or Hosted URL |
+| `PORT` | Defines the listening port for the Node.js Express server. | Standard: `8080` or `7860` |
 
-```
+> **Warning:** Never commit your `.env` file to version control. Ensure it is included in your `.gitignore` prior to deployment.
 
 ---
 
-## ─── REST API Reference ───
+## 🚀 Deployment Strategy
 
-### Get Historical Audit Ledger
+Omni-Node is architected for a multi-cloud, containerized edge deployment, strictly utilizing $0 infrastructure tiers.
 
-Fetches the 50 most recent autonomous self-healing interventions written by the AI engine.
+**Dockerfile Implementation:**
+The Node.js and Python engines are fully dockerized, explicitly exposing port `7860` to comply with Hugging Face Space requirements.
 
-* **Endpoint:** `/api/logs`
-* **Method:** `GET`
-* **Success Response (200 OK):**
+To deploy:
 
-```json
-[
-  {
-    "component_id": "SRV-231",
-    "cpu_load": 98.5,
-    "ai_diagnosis": "System critically overloaded with 98.5% CPU utilization and severe latency (1500ms).",
-    "ai_remediation_command": "sudo systemctl restart networking",
-    "timestamp": "2026-06-20T16:42:10.000Z"
-  }
-]
-
-```
+1. **Python Engine:** Deploy `anomaly-engine` as a Blank Docker Space on **Hugging Face**.
+2. **Node.js Broker:** Deploy `mesh-broker` as a second Blank Docker Space on **Hugging Face**, updating the `.env` secrets via the Space settings.
+3. **React UI:** Deploy `client-ui` to **Vercel**, updating the WebSocket URL target to the live Hugging Face Broker endpoint.
 
 ---
 
-## ─── Future Expansion Roadmap ───
+## 🛣 Roadmap
 
-* **Active SSH Runtime Execution:** Interface the system with secure shell parameters to execute generated bash commands inside decoupled target containers autonomously.
-* **Proactive Vector Scaling:** Switch from basic synthetic telemetry loops to actual Prometheus data pollers pulling production-grade enterprise node pools.
-* **Human-in-the-Loop Webhooks:** Integrate Twilio or Slack APIs requesting human developer authorization before executing destructive commands (like `rm` or server reboots).
-
----
-
-## ─── License ───
-
-Distributed under the MIT License. See `LICENSE` for more information.
+* [x] Distributed telemetry routing via WebSockets.
+* [x] Unsupervised machine learning anomaly integration.
+* [x] Gemini 2.5 AI agent remediation logging.
+* [x] Multi-cloud Docker containerization.
+* [ ] Integrate live production Datadog/Prometheus API ingestion.
+* [ ] Implement secure SSH handshakes for physical script execution on target nodes.
+* [ ] Add Twilio webhook for "Human-in-the-loop" destructive command authorization.
